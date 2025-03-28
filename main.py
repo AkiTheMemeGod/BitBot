@@ -1,16 +1,45 @@
-# This is a sample Python script.
+import discord
+from discord.ext import commands
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import tokens
+from dependencies import *
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+async def send_message(ctx, response, is_private):
+    try:
+        if isinstance(response, dict) and 'file' in response:
+            await ctx.send(file=discord.File(response['file']))
+        else:
+            await ctx.author.send(response) if is_private else await ctx.send(response)
+    except Exception as e:
+        print(e)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@bot.command()
+async def ping(ctx):
+    await ctx.send("Pong! 🏓")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} is now running!')
+    await bot.tree.sync()
+    await bot.change_presence(status=discord.Status.idle)
+
+    channel_id = 1176920698640408576
+    startup_channel = bot.get_channel(channel_id)
+
+    if startup_channel:
+        await startup_channel.purge(limit=None)
+        await startup_channel.send("@everyone"
+                                   "https://tenor.com/view/getting-online-getting-online-gif-27546602")
+    else:
+        print("Could not find the specified channel for startup message.")
+
+def run_discord_bot():
+    bot.run(tokens.token)
