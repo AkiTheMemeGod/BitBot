@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
-import tokens
 from dependencies import *
 import random
 import bot_responses as br
 import requests
 from bs4 import BeautifulSoup
+from AnarchKeyClient import AnarchKeyClient
+
+AnarchKey = AnarchKeyClient(api_key='OcXevh4XAMxPQsOlDfqMjsK0x13RcjCaH-5D2HlC6zKnec5bXvr2tkaOEs9AIcKp', username='AkiTheMemeGod')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -115,9 +117,5 @@ async def whitelist(ctx, person: discord.User = ""):
 
 
 
-
-
-
-
 def run_discord_bot():
-    bot.run(tokens.token)
+    bot.run(token=AnarchKey.get_api_key("BitBot - Discord")['api_key'])
